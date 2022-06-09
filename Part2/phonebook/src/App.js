@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import React from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 
 const Show = ({names, number}) => {
@@ -11,27 +13,18 @@ const Show = ({names, number}) => {
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "+1-123-4567" },
-    {
-      name: "Lola Flanery",
-      number: "+1-017-0526"
-    },
-    {
-      name: "Xochitl Gomez",
-      number: "+1-016-0429"
-    },
-    {
-      name: "Rebeca",
-      number: "+1-016-0716"
-    }
-  ]) 
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
 
 
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons")
+    .then(res => {
+      setPersons(res.data)
+    })
+  }, [])
 
 
   const addName = (event) => {
@@ -92,6 +85,7 @@ const App = () => {
     } else if (value.name.toLowerCase().includes(search.toLowerCase())){
       return value
     }
+    return console.log()
   })
 
 
