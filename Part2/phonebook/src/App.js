@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 
-const Show = ({names, number}) => {
+const Show = ({names, number, onClick}) => {
   return (
     <div>
-      <li>{names} {number}</li>
+      <li>{names} {number} <button onClick={onClick}>Delete</button></li>
     </div>
   )
 }
 
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState(null)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
@@ -24,7 +24,7 @@ const App = () => {
     .then(res => {
       setPersons(res.data)
     })
-  }, [])
+  }, [persons])
 
 
   const addName = (event) => {
@@ -54,6 +54,21 @@ const App = () => {
   }
 
 
+  // requests
+  const baseUrl = 'http://localhost:3001/persons'
+
+  const create = newObject => {
+    const request = axios.post(baseUrl, newObject)
+    return request.then(response => response.data)
+  }
+
+
+  const remove = id => {
+    axios.delete(`${baseUrl}/${id}`)
+  }
+
+  //
+
 
   const addNewName = (event) => {
     event.preventDefault()
@@ -65,7 +80,7 @@ const App = () => {
     const val = contains(nameObj, persons)
 
     if(val === false) {
-      setPersons(persons.concat(nameObj))
+      create(nameObj)
       addName(event)
     } 
     
@@ -73,20 +88,11 @@ const App = () => {
       alert(`${nameObj.name} already exists in phonebook`)
     }
 
+
+
     setNewName("")
     setNewNumber("")
   }
-
-
-
-  const showPerson = persons.filter(value => {
-    if(search === ''){
-      return value
-    } else if (value.name.toLowerCase().includes(search.toLowerCase())){
-      return value
-    }
-    return console.log()
-  })
 
 
 
@@ -123,9 +129,16 @@ const App = () => {
 
       <h2>Numbers</h2>
       <ul>
-      {showPerson.map(n => {
+      {persons &&  persons.filter(value => {
+          if(search === ''){
+            return value
+          } else if (value.name.toLowerCase().includes(search.toLowerCase())){
+            return value
+          }
+          return console.log()
+        }).map(n => {
           return (
-        <Show names={n.name} key={n.name} number={n.number}/>
+        <Show names={n.name} key={n.name} number={n.number} onClick={() => remove(n.id)} />
         )
         }) }
       </ul>
