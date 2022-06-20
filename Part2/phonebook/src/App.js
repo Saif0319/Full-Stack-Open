@@ -12,11 +12,36 @@ const Show = ({names, number, onClick}) => {
 }
 
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error' style={{
+      color: "#270",
+      backgroundColor: "#DFF2BF",
+      width: "15%",
+      padding: 5,
+      margin: 7,
+      borderRadius: 3
+    }}>
+      {message}
+    </div>
+  )
+}
+
+
+
+
+
+
 const App = () => {
   const [persons, setPersons] = useState(null)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [message, setmessage] = useState(false)
 
 
   useEffect(() => {
@@ -63,8 +88,10 @@ const App = () => {
   }
 
 
-  const remove = id => {
-    axios.delete(`${baseUrl}/${id}`)
+  const remove = (name, id) => {
+    if(window.confirm(`Do you really want to delete ${name} ?`)){
+      axios.delete(`${baseUrl}/${id}`)
+    }
   }
 
   //
@@ -82,6 +109,10 @@ const App = () => {
     if(val === false) {
       create(nameObj)
       addName(event)
+      setmessage(true)
+      setTimeout(() => {
+        setmessage(false)
+      }, 5000);
     } 
     
     if (val === true) {
@@ -113,6 +144,8 @@ const App = () => {
 
       <h3>Add a new person</h3>
 
+      {message && <Notification message={"Person added successfully"} />}
+
       <form onSubmit={addNewName}>
 
         <div>
@@ -129,6 +162,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       <ul>
+
       {persons &&  persons.filter(value => {
           if(search === ''){
             return value
@@ -138,7 +172,7 @@ const App = () => {
           return console.log()
         }).map(n => {
           return (
-        <Show names={n.name} key={n.name} number={n.number} onClick={() => remove(n.id)} />
+        <Show names={n.name} key={n.name} number={n.number} onClick={() => remove(n.name, n.id)} />
         )
         }) }
       </ul>
