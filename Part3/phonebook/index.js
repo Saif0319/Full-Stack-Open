@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const Player = require("./modules/mongo")
 
 const app = express()
+app.use(express.json())
 const PORT = 3000
 
 db_URI = "mongodb+srv://saif:saif0319@cluster0.7xs8nrx.mongodb.net/?retryWrites=true&w=majority"
@@ -12,7 +13,7 @@ mongoose.connect(db_URI)
 .catch((error) => console.log(error))
 
 
-app.use(express.json())
+
 
 let persons = [
       {
