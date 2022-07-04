@@ -1,7 +1,7 @@
-const Show = ({country}) => {
+const Show = ({country, handler}) => {
     return (
       <div>
-        <p>{country}</p>
+        <p>{country} <button onClick={handler}>show</button> </p> 
       </div>
     )
 }
